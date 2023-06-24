@@ -1,0 +1,33 @@
+name: Auto Update Repository
+
+on:
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+  schedule:
+    # The shortest interval you can run scheduled workflows is once every 5 minutes.
+    # Note: The schedule event can be delayed during periods of high loads of GitHub Actions workflow runs. 
+    # High load times include the start of every hour. 
+    # To decrease the chance of delay, schedule your workflow to run at a different time of the hour.
+    # At the beginning of every day.
+    - cron: "*/5 * * * *"
+
+# on: [push]
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        # https://github.com/actions/checkout/tree/v3.0.2
+        uses: actions/checkout@v3
+      - name: Modify date and time
+        run: |
+          TZ=":Asia/Ho_Chi_Minh" date > README.md
+          cat README.md
+      - name: Push to repository
+        run: |
+          git config --global user.name "thienpn"
+          git config --global user.email "1010thien1010@gmail.com"
+          now=$(TZ=":Asia/Ho_Chi_Minh" date)
+          git add -A
+          git commit -m "Auto Update on $now"
+          git push
